@@ -51,19 +51,22 @@
 </head>
 
 <body>
+    <!-- <label for="uid">1號顧客</label>
+    <input class="uid" name="uid" type="hidden" value="1"> -->
     <div class="cardContainerOut">
             <div class="cardContainer" data-stock="10" data-price="150" data-pid="1">
                 <img src="./gorgeous-actress-iu-lee-ji-eun-in-blueming-song-shoot-qiangzhi-tw-61653_L.jpg" alt="">
                 <h2>IU 照片 </h2>
                 <small class="stock">庫存 : 10</small>
-                <p class="price">$150</p>
-                <form action="">
+                <p class="price">$150</p> 
+                <form action="/index" method="post">
+                    <input class="uid" name="uid" type="hidden" value="1">
                     <button class="btnMinus btnOperationSymbol">-</button>
                     <!-- maximum不能超過庫存? -->
-                    <input class="quantity" type="text" value="1">
+                    <input class="quantity" type="text" name="amount" value="1">
                     <input type="hidden" name="pid" value="1">
                     <button class="btnPlus btnOperationSymbol">+</button>
-                    <button class="btnAddCart">加入購物車</button>
+                    <button class="btnAddCart" type="submit">加入購物車</button>
                 </form>
             </div>
 
@@ -160,11 +163,12 @@
 
             // 加入購物車按鈕功能
             $('.btnAddCart').click(function () {
+                
                 let price = $(this).parent().data('price');
                 let itemName = $(this).parent().find('h2').text();
                 let itemNum = $(this).parent().find('input').val();
-                let maxStock = extractNumber($(this).parent().find('.stock').text()); // 获取库存数量
-                let imgSrc = $(this).parent().find('img').attr('src');
+                let maxStock = $(this).parent().parent().data('stock'); // 获取库存数量
+                let imgSrc = $(this).parent().parent().find('img').attr('src');
                 // 檢查購物車中是否已經有該商品
                 let existingItem = $('#itemList li').filter(function () {
                     let existingName = $(this).find('.spanItemName').text();

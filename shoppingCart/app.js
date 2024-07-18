@@ -12,7 +12,7 @@ var conn = mysql.createConnection({
     user:'root',
     password:'',
     host:'localhost',
-    database:'test'
+    database:'testTest'
 })
 
 var bp = require("body-parser");
@@ -28,4 +28,14 @@ app.get("/", function(req, res) {
 
 app.get('/index', function(req, res) {
     res.render('index.ejs',{});
+})
+
+app.post('/index', function(req, res) {
+    conn.query("INSERT INTO carts (uid, pid, amount) VALUES (?, ?, ?)",
+        [req.body.uid, req.body.pid, req.body.amount],
+        function(err, result){
+            
+            res.send('add to cart success')
+        }
+    ) 
 })
