@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../jquery-3.7.1.js"></script>
+    <style>
+        img {
+            width: 300px;
+        }
+
+        .cardContainer {
+            background-color: yellow;
+            width: fit-content;
+            position: relative;
+        }
+
+        .cardContainer>p {
+            text-align: right;
+            margin-right: 10%;
+            font-size: 30px;
+        }
+
+        input {
+            width: 15px;
+            height: 15px;
+        }
+
+        .btnOperationSymbol {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btnAddCart {
+            position: absolute;
+            right: 5%;
+            width: 100px;
+        }
+
+        .cardContainerOut {
+            display: flex;
+            /* justify-content: space-between; */
+        }
+
+        .btnRemove {
+            background-color: rgb(255, 111, 111);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cardContainerOut">
+        <div class="cardContainer" data-stock="10" data-price="150">
+            <img src="./gorgeous-actress-iu-lee-ji-eun-in-blueming-song-shoot-qiangzhi-tw-61653_L.jpg" alt="">
+            <h2>IU 照片 </h2>
+            <small class="stock">庫存 : 10</small>
+            <p class="price">$150</p>
+            <button class="btnMinus btnOperationSymbol">-</button>
+            <!-- maximum不能超過庫存? -->
+            <input type="text" value="1">
+            <button class="btnPlus btnOperationSymbol">+</button>
+            <button class="btnAddCart">加入購物車</button>
+        </div>
+
+
+        <div class="cardContainer" data-stock="7" data-price="200">
+            <img src="./IU-New-Balance-Foot-Locker-Exclusive-Collection-3.jpeg" alt="">
+            <h2>IU 照片 NB</h2>
+            <small class="stock">庫存 : 7</small>
+            <p class="price">$200</p>
+            <button class="btnMinus btnOperationSymbol">-</button>
+            <!-- maximum不能超過庫存? -->
+            <input type="text" value="1">
+            <button class="btnPlus btnOperationSymbol">+</button>
+            <button class="btnAddCart">加入購物車</button>
+        </div>
+
+
+        <div class="shoppingCart">
+            <ul id="itemList">
+                <!-- <li>
+                        IU 照片
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btnMinus btnOperationSymbol">-</button>
+                        maximum不能超過庫存?
+                        <input type="text" value="1">
+                        <button class="btnPlus btnOperationSymbol">+</button>
+                    </li>
+
+                    <li>品項二:200</li>
+                    <li>品項三:250</li> -->
+            </ul>
+            <p id="total">總金額 : 0 元</p>
+            <button class="btnCheckout">結帳去!</button>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+
+            // 購物車的減號功能
+            $(document).on('click', '.btnCartMinus', function () {
+                let num = parseInt($(this).parent().find('input').val());
+                let maxStock = $(this).parent().data('stock'); // 读取库存数量
+                // console.log(maxStock);
+                if (num > 1) {
+                    num -= 1;
+                    $(this).parent().find('input').val(num);
+                    // 更新价格
+                    let price = $(this).parent().data('price');
+                    // console.log($(this).parent().text());
+                    let itemName = $(this).parent().find('.spanItemName').text() // 获取品名
+                    $(this).parent().find('.spanPrice').text(`${price * num} 元`)
+                    updateTotal();
+                }
+            });
+
+            // 購物車加號功能
+            $(document).on('click', '.btnCartPlus', function () {
+                let num = parseInt($(this).parent().find('input').val());
+                let maxStock = $(this).parent().data('stock'); // 读取库存数量
+                // console.log(maxStock);
+                // console.log(!isNaN(num),  num < maxStock, maxStock);
+                if (!isNaN(num) && num < maxStock) {
+                    num += 1;
+                    $(this).parent().find('input').val(num);
+                    // 更新价格
+                    let price = $(this).parent().data('price');
+                    $(this).parent().find('.spanPrice').text(`${price * num} 元`)
+                    updateTotal();
+                }
+            });
+
+            // 卡片減號功能
+            $('.btnMinus').click(function () {
+                let num = parseInt($(this).parent().find('input').val());
+                //   console.log($(this).next().val());
+                $(this).parent().find('input').val(num > 1 ? num - 1 : num);
+            })
+
+
+
+            // 卡片加號功能
+            $('.btnPlus').click(function () {
+                let num = parseInt($(this).parent().find('input').val());
+                //   console.log( `${num}+1 `);
+                let maxStock = $(this).parent().data('stock'); // 读取库存数量
+                // console.log($(this).parent().find('input').val());
+                if (!isNaN(num) && num < maxStock) {
+                    $(this).parent().find('input').val(num + 1);
+                }
+            })
+
+            // 加入購物車按鈕功能
+            $('.btnAddCart').click(function () {
+                let price = $(this).parent().data('price');
+                let itemName = $(this).parent().find('h2').text();
+                let itemNum = $(this).parent().find('input').val();
+                let maxStock = extractNumber($(this).parent().find('.stock').text()); // 获取库存数量
+                let imgSrc = $(this).parent().find('img').attr('src');
+                // 檢查購物車中是否已經有該商品
+                let existingItem = $('#itemList li').filter(function () {
+                    let existingName = $(this).find('.spanItemName').text();
+                    return existingName === itemName;
+                });
+                if (itemNum < maxStock) {
+                    if (existingItem.length > 0) {
+                    // 如果已有該商品，增加數量
+                    let currentNum = parseInt(existingItem.find('input').val());
+                    let newNum = currentNum + parseInt(itemNum);
+                    if (newNum > maxStock || itemNum > maxStock) {
+                        alert('超過庫存數量');
+                        newNum = maxStock;
+                    }
+                    existingItem.find('.spanItemName').text(itemName);
+                    existingItem.find('input').val(newNum);
+                    let newPrice = price * newNum;
+                    existingItem.find('.spanPrice').text(`${newPrice} 元`);
+                    updateTotal();
+                } else {
+                    // 如果沒有該商品，新增一個項目
+                    $('#itemList').append(`<li data-stock="${maxStock}" data-price="${price}">
+                                            <img src="${imgSrc}">
+                                            <br>
+                                            <span class="spanItemName">${itemName}</span>
+                                            &nbsp;&nbsp;
+                                            <button class="btnCartMinus btnOperationSymbol">-</button>
+                                            <input type="text" value="${itemNum}">
+                                            <button class="btnCartPlus btnOperationSymbol">+</button>
+                                            &nbsp;&nbsp;
+                                            <span class="spanPrice"> ${price * itemNum} 元</span>
+                                            &nbsp;&nbsp;
+                                            <span class="maxStock">剩餘數量:${maxStock}</span>
+                                            &nbsp;&nbsp;
+                                            <button class="btnRemove">移除商品</button>
+                                            </li>`);
+                    updateTotal();
+                }
+
+                } else {
+                    alert('超過庫存數量');
+                }
+
+                
+                // console.log(existingItem);
+
+                updateTotal();
+            })
+
+            // 更新总金额的函数
+            function updateTotal() {
+                let total = 0;
+                $('#itemList li').find('.spanPrice').each(function () {
+                    total += extractNumber($(this).text());
+                });
+                $('#total').text(`總金額 : ${total} 元`);
+            }
+
+            // 提取数字的函数
+            function extractNumber(str) {
+                // 使用正则表达式提取所有数字
+                let match = str.match(/\d+/g);
+                // 如果匹配到数字，则返回匹配数组中的最后一个数字
+                // 否则返回0
+                // console.log(match);
+                return match ? parseInt(match[match.length - 1]) : 0;
+            }
+
+
+            // 購物車移除品項按鈕
+            $(document).on('click', '.btnRemove', function () {
+                if (confirm('是否要移除該項商品？')) {
+                    $(this).parent().remove();
+                    updateTotal();
+                }
+            });
+
+            // 結帳按鈕的判定庫存部分
+            // 要考慮三種情況
+            // 1. 庫存<客人所選數量  --> 給警告，並將數量調為庫存最大值
+            // 2. 庫存<1 直接清空商品 
+            $('.btnCheckout').click(function () {
+                $('#itemList li').each(function () {
+                    let stock = $(this).data('stock'); // 正確取得庫存
+                    let itemName = $(this).find('.spanItemName').text(); // 正確取得品名
+                    if (stock < 1) {
+                        alert(`${itemName} 庫存不足`);
+                        $(this).remove();
+                    }
+                });
+            });
+            
+
+        })
+    </script>
+</body>
+
+</html>

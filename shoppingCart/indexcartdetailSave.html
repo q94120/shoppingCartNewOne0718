@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../jquery-3.7.1.js"></script>
+    <style>
+        img {
+            width: 200px
+        }
+    </style>
+</head>
+
+<body>
+    <br><br><br><br><br><br><br><br><br><br>
+    <!-- 最大的div 包含所有商品的 -->
+    <div style="border: solid rgb(179, 179, 179) 2px; padding: 30px;">
+        <p style="font-size: 26px;">好市集好市集好市集</p>
+        <div style="border: solid yellowgreen 1px;">
+            
+            <div style="border-bottom: solid 2px rgb(179, 179, 179);
+            margin-bottom: 10px; margin: 20px;">
+                <div style="display: flex;" data-stock="10">
+                    <img src="../gorgeous-actress-iu-lee-ji-eun-in-blueming-song-shoot-qiangzhi-tw-61653_L.jpg" alt="">
+                    <div>
+                        <h3>IU照片</h3>
+                        <span>售價: $3,280</span>
+                        <br><br>
+                        <span>剩餘數量:10</span>
+                    </div>
+    
+                </div>
+                <div style="display: flex;">
+                    <span style="flex: 1;"> 數量</span>
+                    <span style="flex: 1;"> 小計</span>
+                </div>
+                <div style="display: flex; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <button class="btnMinus">-</button>
+                        <input type="text" style="width: 80px; height: 30px; text-align: center; " value="1">
+                        <button class="btnPlus">+</button>
+                    </div>
+                    <div style="flex: 1;">
+                        <span>$ 1000</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="border-bottom: solid 2px rgb(179, 179, 179);
+            margin-bottom: 10px; margin: 20px;">
+                <div style="display: flex;" data-stock="10">
+                    <img src="../IU-New-Balance-Foot-Locker-Exclusive-Collection-3.jpeg" alt="">
+                    <div>
+                        <h3>IU照片</h3>
+                        <span>售價: $3,280</span>
+                        <br><br>
+                        <span>剩餘數量:10</span>
+                    </div>
+    
+                </div>
+                <div style="display: flex;">
+                    <span style="flex: 1;"> 數量</span>
+                    <span style="flex: 1;"> 小計</span>
+                </div>
+                <div style="display: flex; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <button class="btnMinus">-</button>
+                        <input type="text" style="width: 80px; height: 30px; text-align: center; " value="1">
+                        <button class="btnPlus">+</button>
+                    </div>
+                    <div style="flex: 1;">
+                        <span>$ 1000</span>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div style=" background-color: gray; margin-top: 20px;
+    padding: 30px;display: flex; justify-content: space-between;
+    align-items: center;">
+        <span>總金額 :  $ 11111</span>
+        <button style="width: 50px; height: 50px;">結帳</button>
+    </div>
+    
+    <script>
+        // 卡片減號功能
+        $('.btnMinus').click(function () {
+            let num = parseInt($(this).parent().find('input').val());
+            //   console.log($(this).next().val());
+            $(this).parent().find('input').val(num > 1 ? num - 1 : num);
+        })
+
+        // 卡片加號功能
+        $('.btnPlus').click(function () {
+            let num = parseInt($(this).parent().find('input').val());
+            //   console.log( `${num}+1 `);
+            let maxStock = $(this).parent().parent().parent().find('div').data('stock'); // 读取库存数量
+            // console.log($(this).parent().find('input').val());
+            if (!isNaN(num) && num < maxStock) {
+                $(this).parent().find('input').val(num + 1);
+            }
+        })
+    </script>
+</body>
+
+</html>
