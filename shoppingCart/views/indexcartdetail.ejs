@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="../jquery-3.7.1.js"></script>
+    <script src="./jquery-3.7.1.js"></script>
     <style>
         img {
             width: 200px
@@ -19,16 +19,16 @@
     <div style="border: solid rgb(179, 179, 179) 2px; padding: 30px;">
         <p style="font-size: 26px;">好市集好市集好市集</p>
         <div style="border: solid yellowgreen 1px;">
-            
+            <% for (item of products) { %>
             <div style="border-bottom: solid 2px rgb(179, 179, 179);
             margin-bottom: 10px; margin: 20px;">
                 <div style="display: flex;" data-stock="10">
-                    <img src="../gorgeous-actress-iu-lee-ji-eun-in-blueming-song-shoot-qiangzhi-tw-61653_L.jpg" alt="">
+                    <img src="<%= `data:image/jpeg;base64,${Buffer.from(item.img01).toString('base64')}` %>" alt="">
                     <div>
-                        <h3>IU照片</h3>
-                        <span>售價: $3,280</span>
+                        <h3><%= item.name %></h3>
+                        <span>售價: $ <%= item.price %></span>
                         <br><br>
-                        <span>剩餘數量:10</span>
+                        <span>剩餘數量:<%= item.quantity %></span>
                     </div>
     
                 </div>
@@ -47,13 +47,14 @@
                     </div>
                 </div>
             </div>
+            <% } %>
             
-            <div style="border-bottom: solid 2px rgb(179, 179, 179);
+            <!-- <div style="border-bottom: solid 2px rgb(179, 179, 179);
             margin-bottom: 10px; margin: 20px;">
                 <div style="display: flex;" data-stock="10">
                     <img src="../IU-New-Balance-Foot-Locker-Exclusive-Collection-3.jpeg" alt="">
                     <div>
-                        <h3>IU照片</h3>
+                        <h3>I</h3>
                         <span>售價: $3,280</span>
                         <br><br>
                         <span>剩餘數量:10</span>
@@ -74,7 +75,7 @@
                         <span>$ 1000</span>
                     </div>
                 </div>
-            </div>
+            </div> -->
             
         </div>
     </div>

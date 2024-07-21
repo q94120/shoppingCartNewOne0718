@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="../jquery-3.7.1.js"></script>
+    <script src="./jquery-3.7.1.js"></script>
     <style>
         img {
             width: 300px;
@@ -59,8 +59,8 @@
                 <h2>IU 照片 </h2>
                 <small class="stock">庫存 : 10</small>
                 <p class="price">$150</p> 
-                <form action="/index" method="post">
-                    <input class="uid" name="uid" type="hidden" value="1">
+                <form class="addToCartForm" action="/index" method="post">
+                    <input class="uid" name="uid" type="hidden" value="2">
                     <button class="btnMinus btnOperationSymbol">-</button>
                     <!-- maximum不能超過庫存? -->
                     <input class="quantity" type="text" name="amount" value="1">
@@ -69,6 +69,10 @@
                     <button class="btnAddCart" type="submit">加入購物車</button>
                 </form>
             </div>
+
+
+
+
 
         <div class="cardContainer" data-stock="7" data-price="200" data-pid="2">
             <img src="./IU-New-Balance-Foot-Locker-Exclusive-Collection-3.jpeg" alt="">
@@ -99,6 +103,7 @@
             </ul>
             <p id="total">總金額 : 0 元</p>
             <button class="btnCheckout">結帳去!</button>
+            <a href="/index/carts/1">查看購物車</a>
         </div>
     </div>
 
@@ -163,7 +168,7 @@
 
             // 加入購物車按鈕功能
             $('.btnAddCart').click(function () {
-                
+                // event.preventDefault();
                 let price = $(this).parent().data('price');
                 let itemName = $(this).parent().find('h2').text();
                 let itemNum = $(this).parent().find('input').val();
@@ -211,12 +216,26 @@
                 } else {
                     alert('超過庫存數量');
                 }
-
-                
                 // console.log(existingItem);
-
                 updateTotal();
+                alert('添加成功!!!')
             })
+
+            // 回應加入購物車後的訊息，待修改
+            // $('.addToCartForm').on('submit', function (event) {
+            //     event.preventDefault();
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: '/index',
+            //         data: $(this).serialize(),
+            //         success: function (response) {
+            //             alert('添加成功');
+            //         },
+            //         error: function () {
+            //             alert('添加失敗，請重試');
+            //         }
+            //     });
+            // });
 
             // 更新总金额的函数
             function updateTotal() {
@@ -260,8 +279,6 @@
                     }
                 });
             });
-            
-
         })
     </script>
 </body>
