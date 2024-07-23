@@ -12,7 +12,7 @@ var conn = mysql.createConnection({
     user:'root',
     password:'',
     host:'localhost',
-    database:'haoshin'
+    database:'haoshihhome'
 })
 
 var bp = require("body-parser");
@@ -29,7 +29,7 @@ app.get("/", function(req, res) {
 app.get('/index', function(req, res) {
     conn.query("SELECT * FROM member where uid = ?", 
         [req.body.uid],function(err,result){
-            console.log(result);
+            // console.log(result);
             res.render('index.ejs',{});
     })
 })
@@ -71,8 +71,31 @@ app.get('/index/carts/:uid', function(req, res) {
         [req.params.uid],
         function(err, result) {
             // console.log(result);
-            res.render('indexcartdetail.ejs',{products: result});
+            res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice});
         }
     )
 })
 
+function turnPrice(price) {
+    return Number(price).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+    });
+}
+
+// function updateTotal() {
+//     let total = 0;
+//     // 選取所有的 .subtotal 元素
+//     const subtotals = document.querySelectorAll('.subtotal');
+//     // 遍歷每個 .subtotal 元素
+//     subtotals.forEach(function(element) {
+//         // 獲取文本內容並移除非數字字符
+//         let priceText = element.textContent.replace(/[^\d]/g, '');
+//         // 將處理後的文本轉換為整數並加到總金額中
+//         total += parseInt(priceText, 10);
+//     });
+//     // 更新 #totalPrice 元素的文本
+//     document.getElementById('totalPrice').textContent = '總金額 : ' + turnPrice(`${total}`) + '元';
+// }

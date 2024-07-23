@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選擇座位</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            background-color: lightgray;
+            border: 1px solid #444;
+            display: inline-block;
+        }
+        .seat.selected {
+            background-color: green;
+        }
+        .seat.reserved {
+            background-color: red;
+        }
+        .seat.sold {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>選擇座位</h1>
+    <div id="seats-container"></div>
+    <button onclick="submitSeats()">提交</button>
+
+    <script>
+        const eventId = 1;  // 示例事件ID
+        const seatsContainer = document.getElementById('seats-container');
+
+        function loadSeats() {
+            fetch(`/api/events/${eventId}/seats`)
+                .then(response => response.json())
+                .then(data => {
+                    seatsContainer.innerHTML = '';
+                    data.forEach(seat => {
+                        const seatDiv = document.createElement('div');
+                        seatDiv.className = `seat ${seat.status}`;
+                        seatDiv.dataset.id = seat.id;
+                        seatDiv.onclick = () => selectSeat(seatDiv);
+                        seatsContainer.appendChild(seatDiv);
+                    });
+                });
+        }
+
+        function selectSeat(seatDiv) {
+            if (seatDiv.classList.contains('available')) {
+                seatDiv.classList.toggle('selected');
+            }
+        }
+
+        function submitSeats() {
+            const selectedSeats = document.querySelectorAll('.seat.selected');
+            const seatIds = Array.from(selectedSeats).map(seat => seat.dataset.id);
+            fetch(`/api/orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: 1, eventId, seatIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('訂票成功');
+                    loadSeats();
+                } else {
+                    alert('訂票失敗');
+                }
+            });
+        }
+
+        loadSeats();
+    </script>
+</body>
+</html>
