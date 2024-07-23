@@ -71,7 +71,8 @@ app.get('/index/carts/:uid', function(req, res) {
         [req.params.uid],
         function(err, result) {
             // console.log(result);
-            res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice});
+            const total = calculateTotal(result);
+            res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
         }
     )
 })
@@ -99,3 +100,20 @@ function turnPrice(price) {
 //     // 更新 #totalPrice 元素的文本
 //     document.getElementById('totalPrice').textContent = '總金額 : ' + turnPrice(`${total}`) + '元';
 // }
+
+// function updateTotal(products) {
+//     let total = 0;
+//     console.log(products);
+//     products.forEach(product => {
+//         total += product.amount * product.price;
+//     });
+//     return total;
+// }
+
+function calculateTotal(products) {
+    let total = 0;
+    products.forEach(product => {
+        total += product.amount * product.price;
+    });
+    return total;
+}
