@@ -2,6 +2,7 @@
 // npm install express
 // npm install ejs
 // npm install mysql
+// npm install cors
 
 var express = require("express");
 var app = express();
@@ -20,6 +21,9 @@ app.use(bp.urlencoded({ extended: false }));
 app.use(bp.json());
 
 app.use(express.static('public'));
+
+const cors = require("cors");
+app.use(cors()); // 注意 cors 要加小括弧
 
 app.get("/", function(req, res) {
 //   res.send("Hello, World!");
@@ -54,7 +58,7 @@ app.post('/index', function(req, res) {
                     return res.status(500).send('Insert error');
                 }
                 // res.send('INSERT INTO!');
-                
+
             });
         }
         res.redirect('/index/carts');
@@ -71,8 +75,24 @@ app.get('/index/carts/:uid', function(req, res) {
         [req.params.uid],
         function(err, result) {
             // console.log(result);
-            const total = calculateTotal(result);
-            res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
+            // const total = calculateTotal(result);
+            // const turnPrice = turnPrice();
+            res.json(result);
+            // res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
+        }
+    )
+})
+
+app.get('/index/vendor', function(req, res) {
+    conn.query(
+        "SELECT vendor.vid, vendor.vinfo, vendor_info.brand_name, vendor_info.brand_img01 FROM vendor JOIN vendor_info on vendor.vinfo = vendor_info.vinfo where vid = 1",
+        [],
+        function(err, result) {
+            // console.log(result);
+            // const total = calculateTotal(result);
+            // const turnPrice = turnPrice();
+            res.json(result);
+            // res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
         }
     )
 })
@@ -84,6 +104,14 @@ function turnPrice(price) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
     });
+}
+
+function calculateTotal(products) {
+    let total = 0;
+    products.forEach(product => {
+        total += product.amount * product.price;
+    });
+    return total;
 }
 
 // function updateTotal() {
@@ -110,10 +138,3 @@ function turnPrice(price) {
 //     return total;
 // }
 
-function calculateTotal(products) {
-    let total = 0;
-    products.forEach(product => {
-        total += product.amount * product.price;
-    });
-    return total;
-}
