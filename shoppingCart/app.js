@@ -25,6 +25,9 @@ app.use(express.static('public'));
 const cors = require("cors");
 app.use(cors()); // 注意 cors 要加小括弧
 
+const cors = require("cors");
+app.use(cors()); // 注意 cors 要加小括弧
+
 app.get("/", function(req, res) {
 //   res.send("Hello, World!");
      res.send('type  /index')
@@ -58,7 +61,7 @@ app.post('/index', function(req, res) {
                     return res.status(500).send('Insert error');
                 }
                 // res.send('INSERT INTO!');
-                
+
             });
         }
         // res.redirect('/index/carts');
