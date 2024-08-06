@@ -2,6 +2,7 @@
 // npm install express
 // npm install ejs
 // npm install mysql
+// npm install cors
 
 var express = require("express");
 var app = express();
@@ -12,7 +13,7 @@ var conn = mysql.createConnection({
     user:'root',
     password:'',
     host:'localhost',
-    database:'haoshihhome'
+    database:'haoshin'
 })
 
 var bp = require("body-parser");
@@ -21,18 +22,21 @@ app.use(bp.json());
 
 app.use(express.static('public'));
 
+const cors = require("cors");
+app.use(cors()); // 注意 cors 要加小括弧
+
 app.get("/", function(req, res) {
 //   res.send("Hello, World!");
      res.send('type  /index')
 });
 
-app.get('/index', function(req, res) {
-    conn.query("SELECT * FROM member where uid = ?", 
-        [req.body.uid],function(err,result){
-            // console.log(result);
-            res.render('index.ejs',{});
-    })
-})
+// app.get('/index', function(req, res) {
+//     conn.query("SELECT * FROM member where uid = ?", 
+//         [req.body.uid],function(err,result){
+//             console.log(result);
+//             res.render('index.ejs',{});
+//     })
+// })
 
 app.post('/index', function(req, res) {
     conn.query("SELECT * FROM carts WHERE uid = ? AND pid = ?", 
@@ -57,63 +61,31 @@ app.post('/index', function(req, res) {
                 
             });
         }
-        res.redirect('/index/carts');
+        // res.redirect('/index/carts');
     });
 });
 
-// app.get('/index/carts', function(req, res) {
-//     res.render('indexcartdetail.ejs',{})
-// })
-
 app.get('/index/carts/:uid', function(req, res) {
     conn.query(
-        "SELECT carts.uid, carts.pid, product.name, quantity, price, img01, amount FROM carts JOIN product on carts.pid = product.pid where uid = ?",
+        "SELECT carts.uid, carts.pid, product.name, quantity, price, img01, amount, vendor_info.vinfo, brand_name FROM carts JOIN product ON carts.pid = product.pid JOIN vendor ON product.vid = vendor.vid JOIN vendor_info ON vendor.vinfo = vendor_info.vinfo WHERE uid = ?;",
         [req.params.uid],
         function(err, result) {
+            res.json(result);
             // console.log(result);
-            const total = calculateTotal(result);
-            res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
+            // const total = calculateTotal(result);
+            // res.render('indexcartdetail.ejs',{products: result, turnPrice: turnPrice, total:total});
         }
     )
 })
 
-function turnPrice(price) {
-    return Number(price).toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+app.delete('/index/:uid/:pid', function(req, res) {
+    const { uid, pid } = req.params;
+    conn.query("DELETE FROM carts WHERE uid = ? AND pid = ?",
+        [uid, pid],
+        function(err, result) {
+    if (err) {
+        return res.status(500).send('Delete error');
+        }
+        res.send('Delete OK!');
     });
-}
-
-// function updateTotal() {
-//     let total = 0;
-//     // 選取所有的 .subtotal 元素
-//     const subtotals = document.querySelectorAll('.subtotal');
-//     // 遍歷每個 .subtotal 元素
-//     subtotals.forEach(function(element) {
-//         // 獲取文本內容並移除非數字字符
-//         let priceText = element.textContent.replace(/[^\d]/g, '');
-//         // 將處理後的文本轉換為整數並加到總金額中
-//         total += parseInt(priceText, 10);
-//     });
-//     // 更新 #totalPrice 元素的文本
-//     document.getElementById('totalPrice').textContent = '總金額 : ' + turnPrice(`${total}`) + '元';
-// }
-
-// function updateTotal(products) {
-//     let total = 0;
-//     console.log(products);
-//     products.forEach(product => {
-//         total += product.amount * product.price;
-//     });
-//     return total;
-// }
-
-function calculateTotal(products) {
-    let total = 0;
-    products.forEach(product => {
-        total += product.amount * product.price;
-    });
-    return total;
-}
+});

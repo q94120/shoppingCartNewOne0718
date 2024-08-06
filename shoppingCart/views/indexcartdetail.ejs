@@ -22,11 +22,11 @@
             <% for (item of products) { %>
             <div style="border-bottom: solid 2px rgb(179, 179, 179);
             margin-bottom: 10px; margin: 20px;">
-                <div style="display: flex;" data-stock="<%= item.quantity %>">
-                    <img src="<%= `data:image/jpeg;base64,${Buffer.from(item.img01).toString('base64')}` %>" style="" alt="">
+                <div style="display: flex;" data-stock="10">
+                    <img src="<%= `data:image/jpeg;base64,${Buffer.from(item.img01).toString('base64')}` %>" alt="">
                     <div>
                         <h3><%= item.name %></h3>
-                        <span class="price">售價: $ <%= item.price %></span>
+                        <span>售價: $ <%= item.price %></span>
                         <br><br>
                         <span>剩餘數量:<%= item.quantity %></span>
                     </div>
@@ -38,12 +38,12 @@
                 </div>
                 <div style="display: flex; margin-bottom: 10px;">
                     <div style="flex: 1;">
-                        <button class="btnMinus" id="btn">-</button>
+                        <button class="btnMinus">-</button>
                         <input type="text" style="width: 80px; height: 30px; text-align: center; " value="<%= item.amount %>">
                         <button class="btnPlus">+</button>
                     </div>
                     <div style="flex: 1;">
-                        <span class="subtotal"><%= turnPrice(item.amount * item.price) %> 元</span>
+                        <span>$ 1000</span>
                     </div>
                 </div>
             </div>
@@ -83,66 +83,69 @@
     <div style=" background-color: gray; margin-top: 20px;
     padding: 30px;display: flex; justify-content: space-between;
     align-items: center;">
-        <span id="totalPrice">總金額 : <%=  turnPrice(total) %></span>
-        
+        <span>總金額 :  $ 11111</span>
         <button style="width: 50px; height: 50px;">結帳</button>
     </div>
     
     <script>
-        $(document).ready(function() {
-            // 卡片減號功能
-            $('.btnMinus').click(function () {
-                let num = parseInt($(this).parent().find('input').val());
-                $(this).parent().find('input').val(num > 1 ? num - 1 : num);
-                updateSubtotal.call(this);
-                updateTotal();
-            });
+        // 卡片減號功能
+        $('.btnMinus').click(function () {
+            let num = parseInt($(this).parent().find('input').val());
+            //   console.log($(this).next().val());
+            $(this).parent().find('input').val(num > 1 ? num - 1 : num);
+        })
 
-            // 卡片加號功能
-            $('.btnPlus').click(function () {
-                let num = parseInt($(this).parent().find('input').val());
-                let maxStock = $(this).parent().parent().parent().find('div').data('stock');
-                    if (!isNaN(num) && num < maxStock) {
-                        $(this).parent().find('input').val(num + 1);
-                    }
-                updateSubtotal.call(this);
-                updateTotal();
-            });
-
-            $('.price').each(function() {
-                var priceText = $(this).text().replace(/[^\d]/g, '');
-                $(this).text('售價: ' + turnPrice(priceText));
-                });
-
-            function turnPrice(price) {
-                return Number(price).toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-                });
+        // 卡片加號功能
+        $('.btnPlus').click(function () {
+            let num = parseInt($(this).parent().find('input').val());
+            //   console.log( `${num}+1 `);
+            let maxStock = $(this).parent().parent().parent().find('div').data('stock'); // 读取库存数量
+            // console.log($(this).parent().find('input').val());
+            if (!isNaN(num) && num < maxStock) {
+                $(this).parent().find('input').val(num + 1);
             }
+        })
 
-            function updateSubtotal() {
-                let subtotal = 0;
-                let amount = $(this).parent().find('input').val();
-                let subtotalText = $(this).parent().parent().parent().find('.price').text();
-                let newSubtotalText = subtotalText.replace(/[^\d]/g, '');
-                // console.log(newSubtotalText);
-                subtotal += (newSubtotalText * amount);
-                $(this).parent().parent().find('.subtotal').text(turnPrice(`${subtotal}`)+'元');
-            }
+        // function updateTotal() {
+//     let total = 0;
+//     // 選取所有的 .subtotal 元素
+//     const subtotals = document.querySelectorAll('.subtotal');
+//     // 遍歷每個 .subtotal 元素
+//     subtotals.forEach(function(element) {
+//         // 獲取文本內容並移除非數字字符
+//         let priceText = element.textContent.replace(/[^\d]/g, '');
+//         // 將處理後的文本轉換為整數並加到總金額中
+//         total += parseInt(priceText, 10);
+//     });
+//     // 更新 #totalPrice 元素的文本
+//     document.getElementById('totalPrice').textContent = '總金額 : ' + turnPrice(`${total}`) + '元';
+// }
 
-            function updateTotal(){
-                let total = 0;
-                $('.subtotal').each(function() {
-                    let priceText = $(this).text().replace(/[^\d]/g, '');
-                    total += parseInt(priceText);
-                });
-                $('#totalPrice').text('總金額 : ' + turnPrice(`${total}`)+'元');
-            }
+// function updateTotal(products) {
+//     let total = 0;
+//     console.log(products);
+//     products.forEach(product => {
+//         total += product.amount * product.price;
+//     });
+//     return total;
+// }
 
-        });
+// function turnPrice(price) {
+//     return Number(price).toLocaleString('en-US', {
+//     style: 'currency',
+//     currency: 'USD',
+//     minimumFractionDigits: 0,
+//     maximumFractionDigits: 0
+//     });
+// }
+
+// function calculateTotal(products) {
+//     let total = 0;
+//     products.forEach(product => {
+//         total += product.amount * product.price;
+//     });
+//     return total;
+// }
     </script>
 </body>
 

@@ -74,17 +74,17 @@
 
 
 
-        <div class="cardContainer" data-stock="7" data-price="200" data-pid="2">
+        <!-- <div class="cardContainer" data-stock="7" data-price="200" data-pid="2">
             <img src="./IU-New-Balance-Foot-Locker-Exclusive-Collection-3.jpeg" alt="">
             <h2>IU 照片 NB</h2>
             <small class="stock">庫存 : 7</small>
             <p class="price">$200</p>
             <button class="btnMinus btnOperationSymbol">-</button>
-            <!-- maximum不能超過庫存? -->
+            maximum不能超過庫存?
             <input type="text" value="1">
             <button class="btnPlus btnOperationSymbol">+</button>
             <button class="btnAddCart">加入購物車</button>
-        </div>
+        </div> -->
 
 
         <div class="shoppingCart">
@@ -168,7 +168,7 @@
 
             // 加入購物車按鈕功能
             $('.btnAddCart').click(function () {
-                // event.preventDefault();
+                event.preventDefault();
                 let price = $(this).parent().data('price');
                 let itemName = $(this).parent().find('h2').text();
                 let itemNum = $(this).parent().find('input').val();
