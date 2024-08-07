@@ -71,7 +71,7 @@ app.post('/index', function(req, res) {
 
 app.get('/index/carts/:uid', function(req, res) {
     conn.query(
-        "SELECT carts.uid, carts.pid, product.name, quantity, price, img01, amount FROM carts JOIN product on carts.pid = product.pid where uid = ?",
+        "SELECT carts.uid, carts.pid, product.name, quantity, price, img01, amount, vid FROM carts JOIN product on carts.pid = product.pid where uid = ?",
         [req.params.uid],
         function(err, result) {
             // console.log(result);
@@ -85,7 +85,7 @@ app.get('/index/carts/:uid', function(req, res) {
 
 app.get('/index/vendor', function(req, res) {
     conn.query(
-        "SELECT vendor.vid, vendor.vinfo, vendor_info.brand_name, vendor_info.brand_img01 FROM vendor JOIN vendor_info on vendor.vinfo = vendor_info.vinfo where vid = 1",
+        "SELECT vendor.vid, vendor.vinfo, vendor_info.brand_name, vendor_info.brand_img01 FROM vendor JOIN vendor_info on vendor.vinfo = vendor_info.vinfo, where vid = 1",
         [],
         function(err, result) {
             // console.log(result);
