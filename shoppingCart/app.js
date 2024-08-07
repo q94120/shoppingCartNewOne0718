@@ -25,9 +25,6 @@ app.use(express.static('public'));
 const cors = require("cors");
 app.use(cors()); // 注意 cors 要加小括弧
 
-const cors = require("cors");
-app.use(cors()); // 注意 cors 要加小括弧
-
 app.get("/", function(req, res) {
 //   res.send("Hello, World!");
      res.send('type  /index')
@@ -92,3 +89,13 @@ app.delete('/index/:uid/:pid', function(req, res) {
         res.send('Delete OK!');
     });
 });
+
+app.get('/index/carts/products/:pid/:uid', function(req, res) {
+    conn.query(
+        "SELECT product.name, quantity, price, img01, vendor_info.vinfo, brand_name FROM product JOIN vendor ON product.vid = vendor.vid JOIN vendor_info ON vendor.vinfo = vendor_info.vinfo WHERE pid = ? ",
+        [req.params.pid],
+        function(err, result) {
+            res.json(result);
+        }
+    )
+})
